@@ -218,6 +218,9 @@ local function EnsureDBVersion()
 				end
 			end
 		end
+		if oldDB and type(oldDB.LFGList) == "table" then
+			newDB.LFGList = oldDB.LFGList
+		end
 		WoWGuildeDB = newDB
 		settings.dbVersion = DB_VERSION
 	end

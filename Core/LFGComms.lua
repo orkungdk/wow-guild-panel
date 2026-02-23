@@ -1,4 +1,4 @@
--- Guild LFG: announce category (Raid, Mythic+, etc.), list others, invite/whisper. Logout = leave list.
+-- Guild LFG: announce category (Raid, Mythic+, etc.), list others, invite/whisper. Persists until logout. Reload keeps list.
 local ADDON, ns = ...
 local Comms = ns.Comms
 local EventBus = ns.EventBus
@@ -7,8 +7,24 @@ if not Comms or not Comms.QueueGuildLine then
 	return
 end
 
-Comms._lfgList = Comms._lfgList or {}
+-- Persist LFG list in SavedVariables so /reload does not clear it; cleared for self on logout.
+WoWGuildeDB = WoWGuildeDB or {}
+WoWGuildeDB.LFGList = WoWGuildeDB.LFGList or {}
+Comms._lfgList = WoWGuildeDB.LFGList
 Comms._lfgAnnounced = false
+
+-- Rebind after PLAYER_LOGIN in case Comms replaced WoWGuildeDB (DB migration); list must point at current SV.
+if EventBus and EventBus.On then
+	EventBus.On("PLAYER_LOGIN", function()
+		WoWGuildeDB = WoWGuildeDB or {}
+		WoWGuildeDB.LFGList = WoWGuildeDB.LFGList or {}
+		Comms._lfgList = WoWGuildeDB.LFGList
+		local me = LocalFullName()
+		if me and Comms._lfgList[me] and next(Comms._lfgList[me]) then
+			Comms._lfgAnnounced = true
+		end
+	end)
+end
 
 local function LocalFullName()
 	local name = UnitName("player")
