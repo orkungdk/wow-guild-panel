@@ -1,0 +1,163 @@
+## Interface: 120000
+## Version: 0.0.1
+## Author: Astiraïs
+
+## Title: WoW Guild
+## Title-frFR: WoW Guilde
+
+## Notes: Guild icin topluluk merkezi
+## IconTexture: Interface\Icons/inv_ability_skyriding_glyph
+
+## SavedVariables: WoWGuildeDB
+## DefaultState: Enabled
+## LoadOnDemand: 0
+
+# Bus d'events (doit etre 1er)
+Core/EventBusStub.lua
+Core/EventBus.lua
+
+# Pigiste d'abord (moteur)
+Core/Pigiste.lua
+
+# Noyau et outils
+Core/Init.lua
+Core/Prefs.lua
+Core/Utils.lua
+Core/Codec.lua
+Core/Serialize.lua
+Core/BioRules.lua
+Core/Roles.lua
+Core/Rosteur.lua
+Core/Time.lua
+Core/Emotes.lua
+Core/Targets.lua
+Core/Reactions.lua
+Core.lua
+
+# Coeur existant
+Core/DB.lua
+Core/CommsNotices.lua
+Core/Comms.lua
+Core/LFGComms.lua
+Core/GuildProgress.lua
+# Sections/QuartierMiniature/Init.lua
+
+# Données, passerelles
+Data/Seasons.lua
+Data/MythicPlus.lua
+Data/NewsFeed.lua
+Data/News/Config.lua
+Data/Journalist.lua
+Data/DBBridge.lua
+Data/BackgroundAtlases.lua
+
+# Sections/QuartierMiniature/Config.lua
+# Sections/QuartierMiniature/TimeProfiles.lua
+# Sections/QuartierMiniature/TimeProfilesData.lua
+# Sections/QuartierMiniature/DayCycle.lua
+# Sections/QuartierMiniature/RoutesData.lua
+# Sections/QuartierMiniature/Objects.lua
+# Sections/QuartierMiniature/ObjectsData.lua
+# Sections/QuartierMiniature/HoverObjects.lua
+# Sections/QuartierMiniature/HoverObjectsData.lua
+# Sections/QuartierMiniature/ObjectCatalog.lua
+# Sections/QuartierMiniature/ObjectCatalogData.lua
+# Sections/QuartierMiniature/RouteEditor.lua
+# Sections/QuartierMiniature/ObjectScene.lua
+# Sections/QuartierMiniature/ObjectEditor.lua
+# Sections/QuartierMiniature/NpcPersistence.lua
+# Sections/QuartierMiniature/NpcMovementRoutines.lua
+# Sections/QuartierMiniature/NpcActionRules.lua
+# Sections/QuartierMiniature/NpcInteractions.lua
+# Sections/QuartierMiniature/NpcInspector.lua
+# Sections/QuartierMiniature/TimeEditor.lua
+# Sections/QuartierMiniature/OfflineCoordinator.lua
+# Sections/QuartierMiniature/LoadingOverlay.lua
+# Sections/QuartierMiniature/NpcEngine/Context.lua
+# Sections/QuartierMiniature/NpcEngine/Navigation.lua
+# Sections/QuartierMiniature/NpcEngine/Social.lua
+# Sections/QuartierMiniature/NpcEngine/Orders.lua
+# Sections/QuartierMiniature/NpcEngine/Movement.lua
+# Sections/QuartierMiniature/NpcEngine/Visual.lua
+# Sections/QuartierMiniature/NpcEngine/Persistence.lua
+# Sections/QuartierMiniature/NpcEngine/OfflineSim.lua
+# Sections/QuartierMiniature/NpcEngine/Snapshots.lua
+# Sections/QuartierMiniature/NpcEngine/Runtime.lua
+# Sections/QuartierMiniature/NpcEngine.lua
+
+# Actualites
+Data/News/Deaths.lua
+Data/News/MPlus.lua
+Data/News/DungeonBoss.lua
+Data/News/MerchantGold.lua
+Data/News/MerchantItems.lua
+Data/News/WoodHarvest.lua
+Data/News/HerbHarvest.lua
+Data/News/FishingHarvest.lua
+Data/News/OreHarvest.lua
+Data/News/Housing.lua
+Data/News/HousingCleanup.lua
+Data/News/HousingDecor.lua
+Data/News/Achievement.lua
+Data/News/Level.lua
+Data/News/LevelItem.lua
+Data/News/Spec.lua
+Data/News/Zone.lua
+Data/News/QuestDaily.lua
+Data/News/Quest.lua
+Data/News/Expedition.lua
+Data/News/Distance.lua
+Data/News/Mount.lua
+Data/News/Toy.lua
+Data/News/Transmog.lua
+Data/News/LFG.lua
+Data/News/GuildChat.lua
+Data/News/GuildGG.lua
+Data/News/Session.lua
+
+# UI factorisée
+UI/Role.lua
+UI/Icons.lua
+UI/Tooltip.lua
+UI/EntryHeros.lua
+UI/Menu.lua
+UI/SortControls.lua
+UI/EmoteToast.lua
+UI/EmoteChat.lua
+UI/NewsDrop.lua
+
+# Sections
+Sections/Heros/Utils.lua
+Sections/Heros/Context.lua
+Sections/Heros/UI.lua
+Sections/Heros/NewsCore.lua
+Sections/Heros/NewsFeatured.lua
+Sections/Heros/BioMarkdown.lua
+Sections/Heros/BioEditor.lua
+Sections/Heros/Bio.lua
+Sections/Heros/NewsList.lua
+Sections/Heros/Roster.lua
+Sections/Heros/Events.lua
+Sections/Heros/Section.lua
+Sections/Rosteur/Core/Common.lua
+Sections/Rosteur/Core/Drag.lua
+Sections/Rosteur/Core/ConfigUI.lua
+Sections/Rosteur/Core/View.lua
+Sections/Rosteur/Core/SignupSummary.lua
+Sections/Rosteur/SectionCore.lua
+Sections/Rosteur/Section.lua
+# Sections/QuartierMiniature/Section.lua
+Sections/LFG.lua
+Sections/Social/Utils.lua
+Sections/Social/Section.lua
+# Sections/Statistiques.lua
+# Sections/Outils.lua
+
+# Fenêtre principale
+MainFrame.lua
+
+# Boutons
+Core/GB.lua
+
+# Slash commands (toujours en dernier)
+UI/Slash.lua
