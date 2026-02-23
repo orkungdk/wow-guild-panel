@@ -74,7 +74,7 @@ function Sections.LFG(parent)
 	title:SetPoint("TOPLEFT", headerArea, "TOPLEFT", 10, -8)
 	title:SetFont("Fonts\\2002.ttf", 20, "OUTLINE")
 	title:SetTextColor(0.894, 0.655, 0.125)
-	title:SetText("Guild grup ara")
+	title:SetText("Guild Aktivitesi Ara")
 
 	local subtitle = headerArea:CreateFontString("WoWGuilde_LFG_Subtitle", "OVERLAY", "GameFontHighlightSmall")
 	subtitle:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -5)
@@ -177,7 +177,7 @@ function Sections.LFG(parent)
 
 			row.nameText = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 			row.nameText:SetPoint("LEFT", row, "LEFT", 8, 0)
-			row.nameText:SetPoint("RIGHT", row, "RIGHT", -180, 0)
+			row.nameText:SetPoint("RIGHT", row, "RIGHT", -198, 0)
 			row.nameText:SetJustifyH("LEFT")
 
 			row.catText = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
@@ -195,6 +195,25 @@ function Sections.LFG(parent)
 			row.inviteBtn:SetSize(70, 24)
 			row.inviteBtn:SetPoint("RIGHT", row.whisperBtn, "LEFT", -6, 0)
 			row.inviteBtn:SetText("Davet et")
+
+			row.removeBtn = CreateFrame("Button", nil, row)
+			row.removeBtn:SetSize(24, 24)
+			row.removeBtn:SetPoint("RIGHT", row.inviteBtn, "LEFT", -6, 0)
+			local removeLabel = row.removeBtn:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+			removeLabel:SetPoint("CENTER", row.removeBtn, "CENTER", 0, 0)
+			removeLabel:SetTextColor(1, 0.3, 0.3, 1)
+			removeLabel:SetText("X")
+			row.removeBtn:SetScript("OnClick", function() end)
+			row.removeBtn:SetScript("OnEnter", function(self)
+				if GameTooltip then
+					GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+					GameTooltip:SetText("Listeden cikar", 1, 1, 1, 1, true)
+					GameTooltip:Show()
+				end
+			end)
+			row.removeBtn:SetScript("OnLeave", function()
+				if GameTooltip then GameTooltip:Hide() end
+			end)
 
 			itemPool[index] = row
 		end
@@ -236,30 +255,19 @@ function Sections.LFG(parent)
 
 		local list = Comms and Comms.GetLFGList and Comms.GetLFGList() or {}
 		local myName = LocalFullName()
-		local myEntry = list[myName]
 
-		if myEntry then
-			myCategory = myEntry.category
-			addRemoveBtn:SetText("Listeden cikar")
-			addRemoveBtn:SetScript("OnClick", function()
-				if Comms and Comms.SendLFGLeave then
-					Comms.SendLFGLeave()
-				end
-				RefreshList()
-			end)
-		else
-			addRemoveBtn:SetText("Listeye ekle")
-			addRemoveBtn:SetScript("OnClick", function()
-				if not myCategory then
-					return
-				end
-				local note = (noteEdit.GetText and noteEdit:GetText()) or ""
-				if Comms and Comms.SendLFGAnn then
-					Comms.SendLFGAnn(myCategory, note)
-				end
-				RefreshList()
-			end)
-		end
+		addRemoveBtn:SetText("Listeye ekle")
+		addRemoveBtn:SetScript("OnClick", function()
+			if not myCategory then
+				return
+			end
+			local note = (noteEdit.GetText and noteEdit:GetText()) or ""
+			if Comms and Comms.SendLFGAnn then
+				Comms.SendLFGAnn(myCategory, note)
+			end
+			RefreshList()
+		end)
+
 		for _, b in ipairs(categoryButtons) do
 			if b.catKey == myCategory then
 				b:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ADD")
@@ -274,12 +282,12 @@ function Sections.LFG(parent)
 			end
 		end
 
-		local ordered = {}
-		for name, data in pairs(list) do
-			ordered[#ordered + 1] = { name = name, category = data.category or "", note = data.note or "" }
-		end
+		local ordered = list
 		table.sort(ordered, function(a, b)
-			return (a.name or "") < (b.name or "")
+			if (a.name or "") ~= (b.name or "") then
+				return (a.name or "") < (b.name or "")
+			end
+			return (a.category or "") < (b.category or "")
 		end)
 
 		for i, data in ipairs(ordered) do
@@ -297,6 +305,16 @@ function Sections.LFG(parent)
 			row.inviteBtn:SetScript("OnClick", function()
 				DoInvite(data.name)
 			end)
+			local isOwn = (data.name == myName)
+			if row.removeBtn then
+				row.removeBtn:SetShown(isOwn)
+				row.removeBtn:SetScript("OnClick", function()
+					if isOwn and Comms and Comms.SendLFGLeave then
+						Comms.SendLFGLeave(data.category)
+						RefreshList()
+					end
+				end)
+			end
 		end
 		for i = #ordered + 1, #itemPool do
 			itemPool[i]:Hide()

@@ -19,6 +19,21 @@ local function LocalFullName()
 	return name or ""
 end
 
+-- Returns flat list of { name, category, note } so same player can appear multiple times.
+function Comms.GetLFGList()
+	local out = {}
+	for name, cats in pairs(Comms._lfgList or {}) do
+		if type(cats) == "table" then
+			for category, note in pairs(cats) do
+				if category and category ~= "" then
+					out[#out + 1] = { name = name, category = category, note = note or "" }
+				end
+			end
+		end
+	end
+	return out
+end
+
 function Comms.OnLFGMessage(message, channel, sender)
 	if channel ~= "GUILD" or not sender or sender == "" then
 		return
@@ -31,11 +46,24 @@ function Comms.OnLFGMessage(message, channel, sender)
 		return
 	end
 	if p[2] == "LEAVE" then
-		Comms._lfgList[sender] = nil
+		local category = p[3]
+		if not category or category == "" then
+			Comms._lfgList[sender] = nil
+		else
+			if Comms._lfgList[sender] then
+				Comms._lfgList[sender][category] = nil
+				if next(Comms._lfgList[sender]) == nil then
+					Comms._lfgList[sender] = nil
+				end
+			end
+		end
 	elseif p[2] == "ANN" then
 		local category = p[3] or ""
 		local note = p[4] or ""
-		Comms._lfgList[sender] = { category = category, note = note }
+		if category ~= "" then
+			Comms._lfgList[sender] = Comms._lfgList[sender] or {}
+			Comms._lfgList[sender][category] = note
+		end
 	end
 	if EventBus and EventBus.Emit then
 		EventBus.Emit("WG_LFG_UPDATED", Comms._lfgList)
@@ -47,7 +75,8 @@ function Comms.SendLFGAnn(category, note)
 		return
 	end
 	Comms._lfgAnnounced = true
-	Comms._lfgList[LocalFullName()] = { category = category, note = note or "" }
+	Comms._lfgList[LocalFullName()] = Comms._lfgList[LocalFullName()] or {}
+	Comms._lfgList[LocalFullName()][category] = note or ""
 	local noteSafe = (note and note:gsub(";", " ") or ""):sub(1, 100)
 	local line = "LFG;ANN;" .. tostring(category) .. ";" .. noteSafe
 	Comms.QueueGuildLine(line)
@@ -56,20 +85,27 @@ function Comms.SendLFGAnn(category, note)
 	end
 end
 
-function Comms.SendLFGLeave()
-	if not Comms._lfgAnnounced then
+-- category: optional. If given, leave only that category; if nil, leave all (e.g. logout).
+function Comms.SendLFGLeave(category)
+	local me = LocalFullName()
+	if not Comms._lfgList[me] then
 		return
 	end
-	Comms._lfgAnnounced = false
-	Comms._lfgList[LocalFullName()] = nil
-	Comms.QueueGuildLine("LFG;LEAVE")
+	if not category or category == "" then
+		Comms._lfgAnnounced = false
+		Comms._lfgList[me] = nil
+		Comms.QueueGuildLine("LFG;LEAVE")
+	else
+		Comms._lfgList[me][category] = nil
+		if next(Comms._lfgList[me]) == nil then
+			Comms._lfgList[me] = nil
+			Comms._lfgAnnounced = false
+		end
+		Comms.QueueGuildLine("LFG;LEAVE;" .. tostring(category))
+	end
 	if EventBus and EventBus.Emit then
 		EventBus.Emit("WG_LFG_UPDATED", Comms._lfgList)
 	end
-end
-
-function Comms.GetLFGList()
-	return Comms._lfgList or {}
 end
 
 if EventBus and EventBus.On then

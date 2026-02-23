@@ -1486,7 +1486,7 @@ function Sections.Social(parent)
 	lfgButton:SetScript("OnEnter", function(self)
 		if GameTooltip then
 			GameTooltip:SetOwner(self, "ANCHOR_TOP")
-			GameTooltip:SetText("Guild grup ara", 1, 0.82, 0)
+			GameTooltip:SetText("Guild Aktivitesi Ara", 1, 0.82, 0)
 			GameTooltip:AddLine("Raid, Mythic+, Levelling, Achievement veya Delve listesini ac.", 1, 1, 1)
 			GameTooltip:Show()
 		end
